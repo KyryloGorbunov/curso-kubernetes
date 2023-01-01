@@ -1,8 +1,7 @@
 package com.kyrylo.springcloud.msvc.usuarios.controllers;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.kyrylo.springcloud.msvc.usuarios.models.entity.User;
+import com.kyrylo.springcloud.msvc.usuarios.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,20 +13,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kyrylo.springcloud.msvc.usuarios.models.entity.User;
-import com.kyrylo.springcloud.msvc.usuarios.services.UserService;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
 
-    private final UserService service;
-
     @Autowired
-    public UserController(UserService service) {
-        this.service = service;
-    }
+    private UserService service;
 
-    @GetMapping
+    @GetMapping("/")
     public List<User> findAll() {
         return service.findAll();
     }
@@ -41,7 +36,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<User> create(@RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
     }

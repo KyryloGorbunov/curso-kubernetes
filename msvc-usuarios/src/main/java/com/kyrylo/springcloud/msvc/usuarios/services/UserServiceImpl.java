@@ -1,24 +1,19 @@
 package com.kyrylo.springcloud.msvc.usuarios.services;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.kyrylo.springcloud.msvc.usuarios.models.entity.User;
+import com.kyrylo.springcloud.msvc.usuarios.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kyrylo.springcloud.msvc.usuarios.models.entity.User;
-import com.kyrylo.springcloud.msvc.usuarios.repositories.UserRepository;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
-
     @Autowired
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
-    }
+    private UserRepository repository;
 
     @Override
     @Transactional(readOnly = true)
