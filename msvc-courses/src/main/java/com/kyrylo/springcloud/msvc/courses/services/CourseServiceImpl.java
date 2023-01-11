@@ -1,6 +1,9 @@
 package com.kyrylo.springcloud.msvc.courses.services;
 
-import com.kyrylo.springcloud.msvc.courses.entity.Course;
+import com.kyrylo.springcloud.msvc.courses.clients.UserClientRest;
+import com.kyrylo.springcloud.msvc.courses.models.User;
+import com.kyrylo.springcloud.msvc.courses.models.entity.Course;
+import com.kyrylo.springcloud.msvc.courses.models.entity.CourseUser;
 import com.kyrylo.springcloud.msvc.courses.repositories.CourseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +16,11 @@ public class CourseServiceImpl implements CourseService {
 
     private CourseRepository repository;
 
-    public CourseServiceImpl(CourseRepository repository) {
+    private UserClientRest client;
+
+    public CourseServiceImpl(CourseRepository repository, UserClientRest client) {
         this.repository = repository;
+        this.client = client;
     }
 
     @Override
@@ -39,5 +45,59 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> assignUser(User user, Long courseId) {
+        Optional<Course> optionalCourse = repository.findById(courseId);
+        if (optionalCourse.isPresent()) {
+            User userMsvc = client.findById(user.getId());
+
+            Course course = optionalCourse.get();
+            CourseUser courseUser = new CourseUser();
+            courseUser.setUserId(userMsvc.getId());
+
+            course.addCourseUser(courseUser);
+            repository.save(course);
+            return Optional.of(userMsvc);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> createUser(User user, Long courseId) {
+        Optional<Course> optionalCourse = repository.findById(courseId);
+        if (optionalCourse.isPresent()) {
+            User userNewMsvc = client.create(user);
+
+            Course course = optionalCourse.get();
+            CourseUser courseUser = new CourseUser();
+            courseUser.setUserId(userNewMsvc.getId());
+
+            course.addCourseUser(courseUser);
+            repository.save(course);
+            return Optional.of(userNewMsvc);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> deleteUser(User user, Long courseId) {
+        Optional<Course> optionalCourse = repository.findById(courseId);
+        if (optionalCourse.isPresent()) {
+            User userMsvc = client.findById(user.getId());
+
+            Course course = optionalCourse.get();
+            CourseUser courseUser = new CourseUser();
+            courseUser.setUserId(userMsvc.getId());
+
+            course.removeCourseUser(courseUser);
+            repository.save(course);
+            return Optional.of(userMsvc);
+        }
+        return Optional.empty();
     }
 }
