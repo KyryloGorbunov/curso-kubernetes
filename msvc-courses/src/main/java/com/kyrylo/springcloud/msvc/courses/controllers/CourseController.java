@@ -38,7 +38,7 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        Optional<Course> optionalCourse = service.findById(id);
+        Optional<Course> optionalCourse = service.findByIdUsers(id);
         if (optionalCourse.isPresent()) {
             return ResponseEntity.ok(optionalCourse.get());
         }
@@ -120,11 +120,16 @@ public class CourseController {
                             + e.getMessage()));
         }
         if (optionalUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(optionalUser.get());
+            return ResponseEntity.status(HttpStatus.OK).body(optionalUser.get());
         }
         return ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/delete-course-user/{id}")
+    public ResponseEntity<?> deleteCourseUser(@PathVariable Long id) {
+        service.deleteCourseUserById(id);
+        return ResponseEntity.noContent().build();
+    }
 
     private ResponseEntity<Map<String, String>> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
