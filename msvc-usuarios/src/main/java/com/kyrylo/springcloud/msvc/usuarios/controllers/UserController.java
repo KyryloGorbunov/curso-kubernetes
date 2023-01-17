@@ -29,8 +29,8 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/")
-    public List<User> findAll() {
-        return service.findAll();
+    public Map<String, List<User>> findAll() {
+        return Collections.singletonMap("users", service.findAll());
     }
 
     @GetMapping("/{id}")
@@ -65,7 +65,7 @@ public class UserController {
             if (!user.getEmail().isEmpty() && !user.getEmail().equalsIgnoreCase(userDb.getEmail())
                     && service.findByEmail(user.getEmail()).isPresent()) {
                 return ResponseEntity.badRequest()
-                        .body(Collections.singletonMap("message", "There is already a user with this email."));
+                        .body(Collections.singletonMap("message", "There is already a consumer with this email."));
             }
             userDb.setName(user.getName());
             userDb.setEmail(user.getEmail());
